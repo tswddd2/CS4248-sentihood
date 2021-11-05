@@ -13,39 +13,21 @@ Codes and corpora for paper "Utilizing BERT for Aspect-Based Sentiment Analysis 
 
 ## Step 1: prepare datasets
 
-### SentiHood
-
-Since the link given in the [dataset released paper](<http://www.aclweb.org/anthology/C16-1146>) has failed, we use the [dataset mirror](<https://github.com/uclmr/jack/tree/master/data/sentihood>) listed in [NLP-progress](https://github.com/sebastianruder/NLP-progress/blob/master/english/sentiment_analysis.md) and fix some mistakes (there are duplicate aspect data in several sentences). See directory: `data/sentihood/`.
-
-Run following commands to prepare datasets for tasks:
-
-```
-cd generate/
-bash make.sh sentihood
-```
-
-### SemEval 2014
-
-Train Data is available in [SemEval-2014 ABSA Restaurant Reviews - Train Data](http://metashare.ilsp.gr:8080/repository/browse/semeval-2014-absa-restaurant-reviews-train-data/479d18c0625011e38685842b2b6a04d72cb57ba6c07743b9879d1a04e72185b8/) and Gold Test Data is available in [SemEval-2014 ABSA Test Data - Gold Annotations](http://metashare.ilsp.gr:8080/repository/browse/semeval-2014-absa-test-data-gold-annotations/b98d11cec18211e38229842b2b6a04d77591d40acd7542b7af823a54fb03a155/). See directory: `data/semeval2014/`.
-
-Run following commands to prepare datasets for tasks:
-
-```
-cd generate/
-bash make.sh semeval
-```
+Already included in data/sentihood
 
 ## Step 2: prepare BERT-pytorch-model
 
 Download [BERT-Base (Google's pre-trained models)](https://github.com/google-research/bert) and then convert a tensorflow checkpoint to a pytorch model.
 
-For example:
+For Bert-Small, download from [here](https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-4_H-512_A-8.zip) and unzip in folder bert-small
+
+Then run following:
 
 ```
 python convert_tf_checkpoint_to_pytorch.py \
---tf_checkpoint_path uncased_L-12_H-768_A-12/bert_model.ckpt \
---bert_config_file uncased_L-12_H-768_A-12/bert_config.json \
---pytorch_dump_path uncased_L-12_H-768_A-12/pytorch_model.bin
+--tf_checkpoint_path bert-small/bert_model.ckpt \
+--bert_config_file bert-small/bert_config.json \
+--pytorch_dump_path bert-small/pytorch_model.bin
 ```
 
 ## Step 3: train
@@ -56,9 +38,9 @@ For example, **BERT-pair-NLI_M** task on **SentiHood** dataset:
 CUDA_VISIBLE_DEVICES=0,1,2,3 python run_classifier_TABSA.py \
 --task_name sentihood_NLI_M \
 --data_dir data/sentihood/bert-pair/ \
---vocab_file uncased_L-12_H-768_A-12/vocab.txt \
---bert_config_file uncased_L-12_H-768_A-12/bert_config.json \
---init_checkpoint uncased_L-12_H-768_A-12/pytorch_model.bin \
+--vocab_file bert-small/vocab.txt \
+--bert_config_file bert-small/bert_config.json \
+--init_checkpoint bert-small/pytorch_model.bin \
 --eval_test \
 --do_lower_case \
 --max_seq_length 512 \
